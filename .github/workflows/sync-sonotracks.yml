@@ -1,8 +1,10 @@
 name: Sync sonoTracks releases
 
 # ---------------------------------------------------------------------------
-# 10分ごとに sonoTracks 公開 API を叩いて releases.json を更新する。
+# 6時間ごとに sonoTracks 公開 API を叩いて releases.json を更新する。
 # 差分（syncedAt 以外）があれば自動 commit + push。
+# 頻度は sonoTracks 運営の想定（1日数回程度）に合わせている。README の
+# 「APIの利用頻度について」を参照。
 #
 # ▼ 設定
 #   - env.SLUG: sonoTracks プロフィール URL 末尾（例: musikaroid-records）
@@ -19,7 +21,7 @@ name: Sync sonoTracks releases
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:

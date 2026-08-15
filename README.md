@@ -38,14 +38,14 @@
    ```
 3. **同期を仕込む**（下記「同期のセットアップ」から選ぶ）
 
-以上で、10分後（または初回同期後）にジャケット一覧がサイトに並ぶ。
+以上で、次回の同期後（または初回手動実行後）にジャケット一覧がサイトに並ぶ。同期の既定間隔は 6時間（[APIの利用頻度について](#apiの利用頻度について) 参照）。
 
 ## 同期のセットアップ
 
 同期ロジックは `scripts/sync-sonotracks.py`（Python 3.6+・標準ライブラリのみ）。
 これを何らかのスケジューラーから呼び、`releases.json` を更新する。
 
-### A. GitHub Actions（10分ごと自動）
+### A. GitHub Actions（6時間ごと自動）
 
 同梱の `.github/workflows/sync-sonotracks.yml` をリポジトリに置く。
 `env.SLUG` を自分のスラッグに書き換えるだけ:
@@ -57,7 +57,7 @@ env:
 
 commit + push すれば Actions が有効になる。手動即時反映は Actions タブ → "Run workflow"。
 
-### B. GitLab CI（10分ごと自動）
+### B. GitLab CI（6時間ごと自動）
 
 `.gitlab-ci.yml` に:
 
@@ -79,7 +79,7 @@ sync-sonotracks:
 ```
 
 `SONOTRACKS_SLUG` と `GITLAB_PUSH_TOKEN`（push 権限のあるトークン）を CI/CD 変数に入れて、
-Schedules で 10分ごとに走らせる。
+Schedules で 6時間ごと（例: `0 */6 * * *`）に走らせる。
 
 ### C. Netlify Scheduled Functions
 
@@ -94,7 +94,7 @@ Python 版を Netlify Plugin から呼ぶ（README では割愛。curl と jq �
 ```json
 {
   "crons": [
-    { "path": "/api/sync-sonotracks", "schedule": "*/10 * * * *" }
+    { "path": "/api/sync-sonotracks", "schedule": "0 */6 * * *" }
   ]
 }
 ```
@@ -105,7 +105,7 @@ KV / Blob に releases.json を書く方が Vercel 流。実装は割愛。
 ### E. 素の cron（自前サーバー / ローカル）
 
 ```cron
-*/10 * * * * cd /path/to/site && /usr/bin/python3 scripts/sync-sonotracks.py --slug your-slug && git add releases.json && git diff --cached --quiet || (git commit -m "sync sonotracks releases" && git push)
+0 */6 * * * cd /path/to/site && /usr/bin/python3 scripts/sync-sonotracks.py --slug your-slug && git add releases.json && git diff --cached --quiet || (git commit -m "sync sonotracks releases" && git push)
 ```
 
 git push 先が静的ホスティングと連携していれば、更新後自動デプロイ。
@@ -122,6 +122,17 @@ git add releases.json && git commit -m "sync sonotracks releases" && git push
 - `0`: 内容更新あり → commit・push する
 - `100`: syncedAt 以外に差分なし → 何もしなくてよい
 - `1`: fetch 失敗（既存 releases.json はそのまま） → 何もしない
+
+## APIの利用頻度について
+
+sonoTracks 運営の想定は **1日数回程度**。同梱ワークフローと本 README のサンプルは、
+既定で **6時間ごと**（`0 */6 * * *`）にしてあり、これに沿った設定です。
+
+新曲リリース直後など「今すぐ反映したい」ときは、Actions タブから "Run workflow"
+（`workflow_dispatch`）で即時同期できるので、既定の cron 間隔を短くする必要はありません。
+
+これより短い間隔で回したい場合は、**節度をもって**（最短でも1時間程度、
+`0 * * * *` を推奨）。API は公開のインフラを共有しています。
 
 ## 使い方（描画側）
 
@@ -272,7 +283,7 @@ CSS カスタムプロパティで受ける。**規定値を宣言するブロ�
 
 - **一覧が出ない**: ブラウザの devtools コンソールを見る。`releases.json` の 404 ？ パス指定を確認
 - **画像が出ない**: `artworkUrl` は Vercel Image Optimizer 経由の URL。CORS ではなく hotlink 制約の可能性は低いが、CSP で `img-src` を狭めている場合は `sono-tracks.com` を許可
-- **同期が走らない**: GitHub Actions は無料枠だと約 5〜15 分の遅延あり。10分 cron でも実行は前後する
+- **同期が走らない**: GitHub Actions は数分〜数十分の遅延を伴うことがある。6時間 cron でも実行タイミングは前後する（次回同期を早めたければ Actions タブから "Run workflow" で即時実行）
 - **push 失敗**: Actions の権限が read のみ。ワークフローの `permissions: contents: write` を確認、または repo Settings → Actions → Workflow permissions で "Read and write" に
 
 ## example/
