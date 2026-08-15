@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sonotracks-discography-static — Example</title>
+<link rel="stylesheet" href="../sonotracks-catalog.css">
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; max-width: 960px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #1B2A3A; }
+  h1 { font-size: 1.6em; margin-top: 0; }
+  h2 { font-size: 1.1em; margin-top: 3em; padding-bottom: 6px; border-bottom: 1px solid #eee; }
+  code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 0.9em; }
+  .themed {
+    --sonotracks-dg-gap: 24px;
+    --sonotracks-dg-radius: 12px;
+    --sonotracks-dg-title-weight: 400;
+    --sonotracks-dg-title-color: #111;
+    --sonotracks-dg-artist-color: #666;
+    --sonotracks-dg-artist-opacity: 1;
+  }
+</style>
+</head>
+<body>
+  <h1>sonotracks-discography-static — Example</h1>
+  <p>
+    ここでは <code>example/releases.json</code>（サンプルデータ）を読み込んで描画しています。
+    実運用では <code>.github/workflows/sync-sonotracks.yml</code> が
+    <code>/releases.json</code> を自動更新します。
+  </p>
+
+  <h2>1. 既定（<code>columns=4</code>）</h2>
+  <div class="sonotracks-dg" data-src="releases.json"></div>
+
+  <h2>2. 3列、テーマ変数で見た目を上書き</h2>
+  <div class="sonotracks-dg themed" data-src="releases.json" data-columns="3"></div>
+
+  <h2>3. ページ送り付き（<code>data-paged="true" data-limit="2"</code>）</h2>
+  <div class="sonotracks-dg" data-src="releases.json" data-columns="2" data-paged="true" data-limit="2"></div>
+
+  <h2>4. 明示 API（JS から init）</h2>
+  <div id="my-catalog"></div>
+  <script>
+    // 下の script src で読み込んだあとに実行される
+    window.addEventListener('DOMContentLoaded', function () {
+      sonotracksCatalog({
+        container: '#my-catalog',
+        src: 'releases.json',
+        columns: 5,
+      });
+    });
+  </script>
+
+  <script src="../sonotracks-catalog.js"></script>
+</body>
+</html>

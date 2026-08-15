@@ -1,0 +1,47 @@
+{
+  "releases": [
+    {
+      "id": "sample-1",
+      "title": "サンプル作品 1",
+      "artist": "サンプルアーティスト",
+      "genres": ["J-POP"],
+      "trackCount": 1,
+      "priceMin": 200,
+      "artworkUrl": "https://placehold.co/400x400/dcdcdc/808080?text=SAMPLE+1",
+      "url": "https://sono-tracks.com/"
+    },
+    {
+      "id": "sample-2",
+      "title": "サンプル作品 2",
+      "artist": "サンプルアーティスト",
+      "genres": ["Ambient"],
+      "trackCount": 3,
+      "priceMin": 600,
+      "artworkUrl": "https://placehold.co/400x400/dcdcdc/808080?text=SAMPLE+2",
+      "url": "https://sono-tracks.com/"
+    },
+    {
+      "id": "sample-3",
+      "title": "サンプル作品 3",
+      "artist": "サンプルアーティスト",
+      "genres": ["Rock"],
+      "trackCount": 5,
+      "priceMin": 1000,
+      "artworkUrl": "https://placehold.co/400x400/dcdcdc/808080?text=SAMPLE+3",
+      "url": "https://sono-tracks.com/"
+    },
+    {
+      "id": "sample-4",
+      "title": "サンプル作品 4",
+      "artist": "サンプルアーティスト",
+      "genres": ["Jazz"],
+      "trackCount": 4,
+      "priceMin": 800,
+      "artworkUrl": "https://placehold.co/400x400/dcdcdc/808080?text=SAMPLE+4",
+      "url": "https://sono-tracks.com/"
+    }
+  ],
+  "total": 4,
+  "artistUrl": "https://sono-tracks.com/",
+  "syncedAt": "2026-08-15T00:00:00+00:00"
+}

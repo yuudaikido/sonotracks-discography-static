@@ -1,0 +1,66 @@
+name: Sync sonoTracks releases
+
+# ---------------------------------------------------------------------------
+# 10分ごとに sonoTracks 公開 API を叩いて releases.json を更新する。
+# 差分（syncedAt 以外）があれば自動 commit + push。
+#
+# ▼ 設定
+#   - env.SLUG: sonoTracks プロフィール URL 末尾（例: musikaroid-records）
+#   - env.OUTPUT: 出力ファイルパス（既定 releases.json）
+#
+# ▼ 手動即時反映
+#   Actions タブ → "Sync sonoTracks releases" → "Run workflow"
+#   （WP プラグインの「表示を今すぐ更新する」相当）
+#
+# ▼ 他の CI やローカルで動かしたい場合
+#   同期ロジックは scripts/sync-sonotracks.py に切り出してあるので、
+#   任意のスケジューラーから同じスクリプトを呼べる。README を参照。
+# ---------------------------------------------------------------------------
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-sonotracks
+  cancel-in-progress: false
+
+env:
+  SLUG: your-slug-here
+  OUTPUT: releases.json
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync releases.json
+        id: sync
+        env:
+          SONOTRACKS_SLUG: ${{ env.SLUG }}
+          SONOTRACKS_OUTPUT: ${{ env.OUTPUT }}
+        run: |
+          set +e
+          python3 scripts/sync-sonotracks.py
+          code=$?
+          set -e
+          echo "sync_code=$code" >> "$GITHUB_OUTPUT"
+          case $code in
+            0)   echo "changed=true"  >> "$GITHUB_OUTPUT" ;;
+            100) echo "changed=false" >> "$GITHUB_OUTPUT" ;;
+            *)   echo "changed=false" >> "$GITHUB_OUTPUT"; echo "::warning::sync exited with code $code" ;;
+          esac
+
+      - name: Commit and push
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          git config user.name "sonotracks-sync"
+          git config user.email "actions@github.com"
+          git add "${OUTPUT}"
+          git commit -m "sync sonotracks releases"
+          git push

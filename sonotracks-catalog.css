@@ -1,0 +1,155 @@
+/*!
+ * sonotracks-discography-static v1.0 — MIT License
+ *
+ * sonoTracks の作品一覧を静的サイトに埋め込むためのスタイル。
+ * 既定では色を一切指定せず（inherit / currentColor）、並べ方と余白だけを持つ。
+ * すべての調整は CSS カスタムプロパティ経由で受ける。既定値の宣言ブロックは
+ * 置いていない（テーマ側の宣言が必ず勝つように）。
+ *
+ * 使い方（テーマ側の style.css などに）:
+ *   .sonotracks-dg {
+ *     --sonotracks-dg-gap: 24px;
+ *     --sonotracks-dg-radius: 10px;
+ *     --sonotracks-dg-title-color: #111;
+ *     --sonotracks-dg-artist-color: #777;
+ *   }
+ * 一覧ごとに変えたい場合は、その一覧を囲む要素に宣言すれば、その中だけ効く。
+ *
+ * 【一覧】名前 / 既定値 / 何に効くか
+ *   --sonotracks-dg-columns          4        列数（data-columns から渡る）
+ *   --sonotracks-dg-min              140px    1枠の最小幅。これを下回ると折り返す
+ *   --sonotracks-dg-gap              16px     作品どうしの間隔
+ *   --sonotracks-dg-radius           4px      ジャケットの角丸
+ *   --sonotracks-dg-ratio            1 / 1    ジャケットの縦横比
+ *   --sonotracks-dg-link-color       inherit  作品カード全体の文字色
+ *   --sonotracks-dg-title-color      inherit  作品名の色
+ *   --sonotracks-dg-title-weight     bold     作品名の太さ
+ *   --sonotracks-dg-title-size       1em      作品名の大きさ
+ *   --sonotracks-dg-artist-color     inherit  アーティスト名の色
+ *   --sonotracks-dg-artist-opacity   0.8      アーティスト名の薄さ（色を指定するなら 1 に）
+ *   --sonotracks-dg-price-color      inherit  価格の色
+ *   --sonotracks-dg-meta-size        0.9em    アーティスト名と価格の大きさ
+ *   --sonotracks-dg-pager-color      inherit  ページ送りの文字色
+ *   --sonotracks-dg-pager-current    currentColor  現在ページの下線の色
+ */
+
+.sonotracks-dg__list {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(
+      max(
+        var(--sonotracks-dg-min, 140px),
+        calc(
+          (100% - (var(--sonotracks-dg-columns, 4) - 1) * var(--sonotracks-dg-gap, 16px)) /
+            var(--sonotracks-dg-columns, 4)
+        )
+      ),
+      1fr
+    )
+  );
+  gap: var(--sonotracks-dg-gap, 16px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sonotracks-dg__link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--sonotracks-dg-link-color, inherit);
+}
+
+.sonotracks-dg__artwork {
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--sonotracks-dg-ratio, 1 / 1);
+  object-fit: cover;
+  border-radius: var(--sonotracks-dg-radius, 4px);
+  display: block;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sonotracks-dg__title {
+  margin-top: 8px;
+  font-weight: var(--sonotracks-dg-title-weight, bold);
+  font-size: var(--sonotracks-dg-title-size, 1em);
+  color: var(--sonotracks-dg-title-color, inherit);
+}
+
+.sonotracks-dg__artist,
+.sonotracks-dg__price {
+  font-size: var(--sonotracks-dg-meta-size, 0.9em);
+}
+
+.sonotracks-dg__artist {
+  color: var(--sonotracks-dg-artist-color, inherit);
+  opacity: var(--sonotracks-dg-artist-opacity, 0.8);
+}
+
+.sonotracks-dg__price {
+  color: var(--sonotracks-dg-price-color, inherit);
+}
+
+.sonotracks-dg__more {
+  margin-top: var(--sonotracks-dg-gap, 16px);
+}
+
+.sonotracks-dg__more a {
+  color: inherit;
+}
+
+/* ページ送り */
+.sonotracks-dg__pager {
+  margin-top: 20px;
+}
+
+.sonotracks-dg__pager ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sonotracks-dg__pager a,
+.sonotracks-dg__pagernow {
+  display: inline-block;
+  min-width: 2.4em;
+  padding: 6px 10px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--sonotracks-dg-pager-color, inherit);
+}
+
+.sonotracks-dg__pagernow {
+  font-weight: bold;
+  border-bottom: 2px solid var(--sonotracks-dg-pager-current, currentColor);
+}
+
+.sonotracks-dg__pager a:hover,
+.sonotracks-dg__pager a:focus-visible {
+  text-decoration: underline;
+}
+
+.sonotracks-dg__pagergap {
+  padding: 0 2px;
+  opacity: 0.7;
+}
+
+/* 読み上げ専用テキスト（テーマ側に .screen-reader-text が無い場合の保険） */
+.sonotracks-dg .screen-reader-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
