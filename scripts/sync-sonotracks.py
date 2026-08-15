@@ -102,6 +102,15 @@ def main() -> int:
         print("error: --slug or SONOTRACKS_SLUG is required", file=sys.stderr)
         return 2
 
+    if args.slug == "your-slug-here":
+        print(
+            "error: SLUG is still the placeholder 'your-slug-here'.\n"
+            "Edit .github/workflows/sync-sonotracks.yml (env.SLUG) or pass --slug <your-slug> "
+            "before running the sync.",
+            file=sys.stderr,
+        )
+        return 2
+
     try:
         new_data = fetch_all(args.slug, args.per_page, args.api_origin)
     except Exception as e:
