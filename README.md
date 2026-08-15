@@ -134,6 +134,10 @@ sonoTracks 運営の想定は **1日数回程度**。同梱ワークフローと
 これより短い間隔で回したい場合は、**節度をもって**（最短でも1時間程度、
 `0 * * * *` を推奨）。API は公開のインフラを共有しています。
 
+なお、API のレスポンスは **CDN で約10分間キャッシュ**されます（詳細は
+[公式ガイド](https://sono-tracks.com/api-guide)参照）。作品公開直後の手動同期は
+10分ほど間をおくと確実です。
+
 ## 使い方（描画側）
 
 ### 宣言的（data-\* 属性）
@@ -251,6 +255,10 @@ CSS カスタムプロパティで受ける。**規定値を宣言するブロ�
 
 ## API について
 
+**公式の説明ページ**: <https://sono-tracks.com/api-guide>
+（呼び方・パラメータ・キャッシュの挙動はこちらが正本。本 README と差異がある場合は
+公式を優先してください）
+
 `GET https://sono-tracks.com/api/tracks/public/artist-releases?slug={slug}&limit={n}&page={p}`
 
 レスポンス:
@@ -284,6 +292,7 @@ CSS カスタムプロパティで受ける。**規定値を宣言するブロ�
 - **一覧が出ない**: ブラウザの devtools コンソールを見る。`releases.json` の 404 ？ パス指定を確認
 - **画像が出ない**: `artworkUrl` は Vercel Image Optimizer 経由の URL。CORS ではなく hotlink 制約の可能性は低いが、CSP で `img-src` を狭めている場合は `sono-tracks.com` を許可
 - **同期が走らない**: GitHub Actions は数分〜数十分の遅延を伴うことがある。6時間 cron でも実行タイミングは前後する（次回同期を早めたければ Actions タブから "Run workflow" で即時実行）
+- **同期したのに新作が出ない**: API のレスポンスは約10分キャッシュされる。時間をおいて再実行（[公式ガイド](https://sono-tracks.com/api-guide)参照）
 - **push 失敗**: Actions の権限が read のみ。ワークフローの `permissions: contents: write` を確認、または repo Settings → Actions → Workflow permissions で "Read and write" に
 
 ## example/
