@@ -1,4 +1,7 @@
 # sonotracks-discography-static
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Zero deps](https://img.shields.io/badge/dependencies-none-brightgreen)
+![Vanilla JS](https://img.shields.io/badge/vanilla-JS-yellow)
 
 [sonoTracks](https://sono-tracks.com/) の作品一覧を、**静的サイト**（GitHub Pages / Cloudflare Pages / Netlify / Vercel / S3 など、なんでも）に埋め込むための最小パッケージ。
 
